@@ -201,7 +201,7 @@ class TaskController extends Controller
                 $tasks = $query->get();
                 
             } else {
-                $message = $name.'さんの指示したタスク一覧';
+                $message = $name.'さんの指示タスク一覧';
                 $tasks = Task::where('lawyer_initial','=',$name)
                         ->get();
             }
@@ -231,7 +231,7 @@ class TaskController extends Controller
                 $tasks = $query->get();
                 
             } else {
-                $message = $name.'さんの処理したタスク一覧';
+                $message = $name.'さんの処理タスク一覧';
                 $tasks = Task::where('staff_name','=',$name)->get();
             }
             return view('staff_mypage', ['message'=>$message, 'tasks'=>$tasks] );

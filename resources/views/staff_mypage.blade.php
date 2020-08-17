@@ -60,7 +60,8 @@
                       <input type="radio" name="n1" id="r2" value=3><label for="r2">処理済み</label>
                     </div>
                     
-                    <input name="updated_at" type="date" style="width:238px"><br>
+                    <input name='from' type="date" style="width:238px"><br>
+                    <input name='to' type="date" style="width:238px"><br>
                     <input type='text' name='lawyer_initial' placeholder='担当弁護士'><br>
                     <input type='text' name='case_number' placeholder='事件番号'><br>
                     <input type='text' name='client_name' placeholder='依頼者名'><br>

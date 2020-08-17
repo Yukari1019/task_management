@@ -22,24 +22,47 @@ class TaskController extends Controller
         
         //if($request->has('lawyer_initial','case_number','client_name','title','staff_name')){
         if(!empty($input['from']) || !empty($input['to']) || !empty($input['lawyer_initial']) || !empty($input['case_number']) || !empty($input['client_name']) || !empty($input['title']) || !empty($input['staff_name'])){
-        
-            $message = '検索結果画面';
-            $query = Task::query();
-            foreach ($request->only(['lawyer_initial','case_number','client_name','title', 'staff_name']) as $key => $value) {
-                $query->where($key, 'like', '%'.$value.'%');
-            }
             
-            $from[0] = $request->from;
-            $to[0] = $request->to;
-            $query->whereBetween('updated_at', [$from[0], $to[0]]);
-            
-            if($request->n1==="3"){
+            if(empty($input['from']) && empty($input['to'])){
+                
+                $message = '検索結果画面';
+                $query = Task::query();
+                
+                foreach ($request->only(['lawyer_initial','case_number','client_name','title', 'staff_name']) as $key => $value) {
+                    $query->where($key, 'like', '%'.$value.'%');
+                }
+                
+                if($request->n1==="3"){
                 $query->where('status','=',$request->n1);
-            } else {
+                } else {
                 $query->where(function($query){
                     $query->orWhere('status','=',1)
                           ->orWhere('status','=',2);
-                });
+                    });
+                }
+                
+            } else {
+                
+                $message = '検索結果画面';
+                $query = Task::query();
+                
+                foreach ($request->only(['lawyer_initial','case_number','client_name','title', 'staff_name']) as $key => $value) {
+                    $query->where($key, 'like', '%'.$value.'%');
+                }
+                
+                $from[0] = $request->from;
+                $to[0] = $request->to;
+                $query->whereBetween('updated_at', [$from[0], $to[0]]);
+                
+                if($request->n1==="3"){
+                    $query->where('status','=',$request->n1);
+                } else {
+                    $query->where(function($query){
+                        $query->orWhere('status','=',1)
+                              ->orWhere('status','=',2);
+                    });
+                
+                }
                 
             }
             $tasks = $query->get();
@@ -179,27 +202,81 @@ class TaskController extends Controller
         $name = Auth::user()->name;
         $division = Auth::user()->division;
         //dd($division);
+        $input = $request->all();
         
         if($division==1){
-            if($request->has('updated_at', 'case_number','client_name','title','staff_name')){
-                $message = $name.'の処理：検索結果画面';
-                $query = Task::query();
-                $query->where('lawyer_initial', '=', $name);
-                foreach ($request->only(['updated_at','case_number','client_name','title', 'staff_name']) as $key => $value) {
-                    $query->where($key, 'like', '%'.$value.'%');
-                }
+            
+            // if($request->has('updated_at', 'case_number','client_name','title','staff_name')){
+            //     $message = $name.'の処理：検索結果画面';
+            //     $query = Task::query();
+            //     $query->where('lawyer_initial', '=', $name);
+            //     foreach ($request->only(['updated_at','case_number','client_name','title', 'staff_name']) as $key => $value) {
+            //         $query->where($key, 'like', '%'.$value.'%');
+            //     }
                 
-                if($request->n1==="3"){
+            //     if($request->n1==="3"){
+            //         $query->where('status','=',$request->n1);
+            //     } else {
+            //         $query->where(function($query){
+            //             $query->orWhere('status','=',1)
+            //                   ->orWhere('status','=',2);
+            //         });
+                    
+            //     }
+            //     $tasks = $query->get();
+           
+            
+            
+            if(!empty($input['from']) || !empty($input['to']) || !empty($input['case_number']) || !empty($input['client_name']) || !empty($input['title']) || !empty($input['staff_name'])){
+            
+                if(empty($input['from']) && empty($input['to'])){
+                    
+                    $message = $name.'の指示：検索結果画面';
+                    
+                    $query = Task::query();
+                    
+                    $query->where('lawyer_initial', '=', $name);
+                    
+                    foreach ($request->only(['case_number','client_name','title', 'staff_name']) as $key => $value) {
+                        $query->where($key, 'like', '%'.$value.'%');
+                    }
+                    
+                    if($request->n1==="3"){
                     $query->where('status','=',$request->n1);
-                } else {
+                    } else {
                     $query->where(function($query){
                         $query->orWhere('status','=',1)
                               ->orWhere('status','=',2);
                     });
+                    }
+                
+                } else {
                     
+                    $message = $name.'の指示：検索結果画面';
+                    
+                    $query = Task::query();
+                    
+                    $query->where('lawyer_initial', '=', $name);
+                    
+                    foreach ($request->only(['case_number','client_name','title', 'staff_name']) as $key => $value) {
+                        $query->where($key, 'like', '%'.$value.'%');
+                    }
+                    
+                    $from[0] = $request->from;
+                    $to[0] = $request->to;
+                    $query->whereBetween('updated_at', [$from[0], $to[0]]);
+                    
+                    if($request->n1==="3"){
+                        $query->where('status','=',$request->n1);
+                    } else {
+                        $query->where(function($query){
+                            $query->orWhere('status','=',1)
+                                  ->orWhere('status','=',2);
+                        });
+                        
+                    }
                 }
                 $tasks = $query->get();
-                
             } else {
                 $message = $name.'さんの指示タスク一覧';
                 $tasks = Task::where('lawyer_initial','=',$name)
@@ -209,23 +286,76 @@ class TaskController extends Controller
             
         } elseif($division==2) {
             
-            if($request->has('updated_at', 'lawyer_initial','case_number','client_name','title')){
-                $message = $name.'の処理：検索結果画面';
-                $query = Task::query();
-                $query ->where('staff_name', '=', $name);
-                foreach ($request->only(['updated_at','lawyer_initial','case_number','client_name','title']) as $key => $value) {
+            // if($request->has('updated_at', 'lawyer_initial','case_number','client_name','title')){
+            //     $message = $name.'の処理：検索結果画面';
+            //     $query = Task::query();
+            //     $query ->where('staff_name', '=', $name);
+            //     foreach ($request->only(['updated_at','lawyer_initial','case_number','client_name','title']) as $key => $value) {
+            //             $query->where($key, 'like', '%'.$value.'%');
+            //         }
+                
+            //     if($request->n1==="3"){
+            //         $query->where(function($query){
+            //             $query->where('status','=',3);
+            //         });
+            //     } else {
+            //         $query->where(function($query){
+            //             $query->orWhere('status','=',1)
+            //                   ->orWhere('status','=',2);
+            //         });
+                    
+            //     }
+            //     $tasks = $query->get();
+            
+            
+            
+            if(!empty($input['from']) || !empty($input['to']) || !empty($input['lawyer_initial']) || !empty($input['case_number']) || !empty($input['client_name']) || !empty($input['title'])){
+            //dd($input);
+                
+                if(empty($input['from']) && empty($input['to'])){
+                    $message = $name.'の処理：検索結果画面';
+                    
+                    $query = Task::query();
+                    
+                    $query ->where('staff_name', '=', $name);
+                    
+                    foreach ($request->only(['lawyer_initial', 'case_number','client_name','title']) as $key => $value) {
                         $query->where($key, 'like', '%'.$value.'%');
                     }
-                
-                if($request->n1==="3"){
-                    $query->where(function($query){
-                        $query->where('status','=',3);
-                    });
-                } else {
+                    
+                    if($request->n1==="3"){
+                    $query->where('status','=',$request->n1);
+                    } else {
                     $query->where(function($query){
                         $query->orWhere('status','=',1)
                               ->orWhere('status','=',2);
                     });
+                    }
+                    
+                } else {
+                    
+                    $message = $name.'の処理：検索結果画面';
+                    
+                    $query = Task::query();
+                    
+                    $query ->where('staff_name', '=', $name);
+                    
+                    foreach ($request->only(['lawyer_initial', 'case_number','client_name','title']) as $key => $value) {
+                        $query->where($key, 'like', '%'.$value.'%');
+                    }
+                    
+                    $from[0] = $request->from;
+                    $to[0] = $request->to;
+                    $query->whereBetween('updated_at', [$from[0], $to[0]]);
+                    
+                    if($request->n1==="3"){
+                        $query->where('status','=',$request->n1);
+                    } else {
+                        $query->where(function($query){
+                            $query->orWhere('status','=',1)
+                                  ->orWhere('status','=',2);
+                        });
+                    }
                     
                 }
                 $tasks = $query->get();

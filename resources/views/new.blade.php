@@ -115,13 +115,13 @@
                                 $('#button2').on('click', () => {
                                     let sam = document.getElementById("title").value;
                                     if(sam=="郵送処理"){
-                                        $('textarea').html('○○を○○へ○通郵送してください。速度：速達　送り方：特定記録　宛先：　保存場所：');
+                                        $('textarea').html('○○を○○へ○通郵送してください。速度：（例）速達　送り方：（例）特定記録　宛先：　保存場所：　備考：');
                                     } else if(sam=="誤字脱字チェック") {
-                                        $('textarea').text('サンプル２');
+                                        $('textarea').html('○○を誤字脱字チェックしてください。　保存場所：　備考：');
                                     } else if(sam=="裁判所提出") {
-                                        $('textarea').text('サンプル２');
+                                        $('textarea').text('○○を裁判所と相手方へ提出してください。保存場所：　備考：');
                                     } else if(sam=="各種資料取寄せ") {
-                                        $('textarea').text('サンプル２');
+                                        $('textarea').text('○○を取得してください。');
                                     } else {
                                         $('textarea').text('');
                                     }
